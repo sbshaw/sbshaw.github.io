@@ -1,0 +1,127 @@
+---
+title: "Basic Loops"
+author: "S. Shaw"
+date: "April 24, 2019"
+output: html_document
+---
+
+
+```{r, echo=FALSE, eval=FALSE}
+# as set-up, doesn't appear in mark down doc
+rmarkdown::render("LoopsIntro.Rmd")
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loop Basics
+
+Loops allow you to more efficiently complete repetitive tasks. 
+
+There are two kinds of loops. "for" loops and "while" loops. 
+
+"for" loops repeat a given task for a specific number of times set at the beginning of the loop. 
+
+"while" loops repeat a task until a given condition is met; there is no need to set the specific number of times for the loop to repeat. 
+
+Let's look at a simple example of a "for" loop:
+
+####Example 1
+```{r Example 1}
+for (i in 1:5){
+print(i*2)
+}
+
+```
+
+
+Note the primary components of the syntax. There is the "for" command followed by a counter (in this case i) with a given range. The task to be completed is then contained within the squiggly brackets { }. There always needs to be "for" and "in" within the parentheses, but the name of the counter and the range can vary. Let's look at another example to illustrate this. 
+
+####Example 2
+```{r Example 2}
+for (Character in c('Alvin','Simon', 'Theodore')){
+  print( paste(Character, 'ate a nut'))
+}
+```
+
+In Example 2, the counter was the variable 'Character' and the range was the number of string variables in a vector. You probably won't often need to do a loop with a string variable, but this is intended to illustrate what parts of the sytnax are fixed and what parts can vary. 
+
+It is often useful in a loop to have another numerical variable that is being incremented beside the primary counter. In particular, say you want to remove certain values from a given vector and insert them into a new vector. For instance, say you have AllData <- c(2, 4, 1, 5, 2, 1, 0, 3, 4, 1, 1) and you want to create a new vector (HighValues) that only includes the values greater than 3.  To construct this new vector, you need to specify the index position for each value you add to the new vector. Thus, we need another numerical counting variable that we use within the vector that only gets incremented when a certain condition is met. We'll call this new numerical counter "j".
+
+####Example 3
+```` {r Example 3}
+j<- 1 # initialize j counter
+
+AllData <- c(2, 4, 1, 5, 2, 1, 0, 3, 4, 1, 1)
+HighValues <- 0
+
+for (i in 1:length(AllData)){
+  
+  if(AllData[i]>3){
+    HighValues[j]<-AllData[i]
+    j=j+1
+  }
+}
+print(HighValues)
+```
+
+We see that we use an if statement to evaluate each value in the OldData vector (as incremented by "i"). If a value exceeds 3, the value is placed in a new vector in whch the index value is indicated by "j". Since "j"" is not automatically incremented (unlike "i"), we need to do it ourselves. Thus, after placing a value in the vector HighValues, we also need a line of code that increases j by 1 (i.e. j=j+1).  
+
+#####Question
+How could you modify Example 3 such that it selects values of 3 or less and places them in a vector called LowValues?
+
+```{ r, echo=FALSE, eval=FALSE}
+#It is possible to do Example 3 in a much simpler way without a loop, but the point is to demonstrate the use of both counters i and j simultaneously
+# The simpler way to do Example 3 is with conditional indexing:
+
+NewData <- OldData[OldData>3]
+
+```
+
+
+We can take this concept of having multiple counters in a loop (one of which is directly incremented by your code) and apply it to a slightly more complicated example. A common use of "for"" loops is to help reaggregate data in certain ways. For example, say you have a file of daily temperature values and you want to reaggregate to find the mean of the daily temperature over weekly groupings. In Excel, it is straightforward to do this task, but if you had a long file it would be extremely tedious, time-consuming, and prone to error (unless you use a VBA script). A for loop is a perfect way to calculate weekly averages with just a few lines of code and a few minutes of effort. 
+
+As in Example 3, we use an if statement to decide if a certain condition is met, and if the condition is met we place a value indexed by the counter "Groups" in a new vector ("Day3_Temp" in this case). However, unlike before, we need to do slightly more work to find this new value; we need to keep a running sum of temperature values within each group (variable "Sum"). This sum of temperature values is a temporary value that is reinitiated to zero for each new group. We also need to keep track of how many values have been added to each group ("Days_in_Group") and rese this value when the number of days is 3. 
+
+####Example 4
+```{R Example 4}
+Temp <- c(10, 11, 10, 12, 13, 14, 14, 15, 17, 10, 11, 16, 17, 16, 11, 12, 16, 17, 18, 17, 18)
+
+Days_in_Group <- 1
+Groups <- 1
+Sum <-0
+Day3_Temp <- 0
+
+for (i in 1:21){
+  
+  if (Days_in_Group==7){
+  Day3_Temp[Groups] <- (Temp[i]+Sum)/7
+  Sum<-0
+  Days_in_Group<-1
+  Groups<- Groups+1
+  } else {
+  Sum <- Temp[i]+Sum
+  Days_in_Group<-Days_in_Group+1
+  } # if else
+  
+
+} # for i
+
+print(Day3_Temp)
+```
+
+
+#####Question
+How might you modify this code to find the average over 7 day periods?
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
